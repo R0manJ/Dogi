@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:hint="TEST"
+    android:textSize="90sp"
+    android:textStyle="bold"
+    android:textColor="#59b15d"
+    android:id="@+id/tv_time"
+    android:background="@color/transparency"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
