@@ -23,24 +23,24 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initialization();
+//        initialization();
 //        Intent intent = new Intent(this,Main2Activity.class);
 //        startActivity(intent);
         //VoiceUtility.getInstance(this).playTest(getApplicationContext());
-        try {
-//            VoiceUtility.getInstance(this).getCurrentTime(21,20,20,0);
-            VoiceUtility.getInstance(this).numberTest();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+////            VoiceUtility.getInstance(this).getCurrentTime(21,20,20,0);
+//            VoiceUtility.getInstance(this).numberTest();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
     private void initialization()
     {
 
-        tv_timeDisplay = findViewById(R.id.tv_time);
-        iv_emoji = findViewById(R.id.iv_emoji);
+//        tv_timeDisplay = findViewById(R.id.tv_time);
+//        iv_emoji = findViewById(R.id.iv_emoji);
 
         mHandler = new Handler()
         {
