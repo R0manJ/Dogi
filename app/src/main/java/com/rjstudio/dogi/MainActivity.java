@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rjstudio.dogi.Utilities.BluetoothUtility;
 import com.rjstudio.dogi.bean.Bluetooth;
@@ -23,6 +25,7 @@ public class MainActivity extends Activity {
     private ImageView iv_emoji;
     private Handler mHandler;
     private ListView lv_menu;
+    private BluetoothUtility btUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,7 @@ public class MainActivity extends Activity {
         tv_timeDisplay = findViewById(R.id.tv_time);
         iv_emoji = findViewById(R.id.iv_emoji);
         initialMenu();
-        BluetoothUtility btUtility = new BluetoothUtility(this);
+        btUtility = new BluetoothUtility(this);
 //        mHandler = new Handler()
 //        {
 //            @Override
@@ -69,7 +72,23 @@ public class MainActivity extends Activity {
 
         List<String> menu = Arrays.asList(new String[]{"Bluetooth","About"});
         ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,menu);
+
         lv_menu.setAdapter(myAdapter);
+        lv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position)
+                {
+                    case 0:
+                        Toast.makeText(getApplicationContext(),"BT",Toast.LENGTH_LONG).show();
+                        break;
+                    case 1:
+                        Toast.makeText(getApplicationContext(),"About",Toast.LENGTH_LONG).show();
+                        break;
+                }
+            }
+        });
+
 
 
     }
@@ -94,5 +113,11 @@ public class MainActivity extends Activity {
             }
             while (true);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        btUtility.killReceiver();
     }
 }
