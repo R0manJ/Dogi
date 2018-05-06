@@ -3,8 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#fc4747</color>
-    <color name="lezhengling">#EE0000</color>
-
+    <color name="le">#EE0000</color>
+    <color name="black">#000</color>
+    <color name="luo">#66CCFF</color>
     <!--Custom colorAccent-->
     <color name="transparency">#86000000</color>
     <color name="white">#fff</color>

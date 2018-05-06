@@ -6,10 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.rjstudio.dogi.bean.Bluetooth;
+import com.rjstudio.dogi.Bean.Bluetooth;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,6 +100,7 @@ public class BluetoothUtility {
                     {
                         Log.d(TAG, "Name : "+bluetooth1.getName() + "Address : "+bluetooth1.getAddress());
                     }
+                    Toast.makeText(context,"Total "+newBluetooths.size() +"devices . ",Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -134,12 +136,13 @@ public class BluetoothUtility {
 
 
         }
+        Log.d(TAG, "initialization: register");
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(BluetoothDevice.ACTION_FOUND);
         context.registerReceiver(mReceiver,filter);
-
-        bluetoothAdapter.startDiscovery();
+        searchBT();
+        //bluetoothAdapter.startDiscovery();
 
 
 
@@ -149,6 +152,47 @@ public class BluetoothUtility {
     public void killReceiver()
     {
         context.unregisterReceiver(mReceiver);
+        bluetoothAdapter.cancelDiscovery();
     }
 
+    public List<Bluetooth> getNewBluetooths() {
+        return newBluetooths;
+    }
+
+    public void setNewBluetooths(List<Bluetooth> newBluetooths) {
+        this.newBluetooths = newBluetooths;
+    }
+
+    public List<Bluetooth> getConnectedBluetooths() {
+        return connectedBluetooths;
+    }
+
+    public void setConnectedBluetooths(List<Bluetooth> connectedBluetooths) {
+        this.connectedBluetooths = connectedBluetooths;
+    }
+
+    public void searchBT()
+    {
+        try{
+//            bluetoothAdapter.cancelDiscovery();
+            Log.d(TAG, "searchBT: startDiscorvery -  "+bluetoothAdapter.startDiscovery());
+            Log.d(TAG, "searchBT: isDiscorvery - "+bluetoothAdapter.isDiscovering());
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        if (bluetoothAdapter.isDiscovering())
+        {
+            Toast.makeText(context,"Searching...",Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Log.d(TAG, "searchBT: cancel Discovery "+bluetoothAdapter.cancelDiscovery());
+            Log.d(TAG, "searchBT: ?"+bluetoothAdapter.isEnabled());
+            Toast.makeText(context,"Search fail...",Toast.LENGTH_SHORT).show();
+        }
+
+    }
 }

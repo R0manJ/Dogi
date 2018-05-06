@@ -1,4 +1,4 @@
-package com.rjstudio.dogi.bean;
+package com.rjstudio.dogi.Bean;
 
 import android.os.ParcelUuid;
 
