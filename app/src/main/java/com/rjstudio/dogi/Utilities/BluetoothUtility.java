@@ -50,12 +50,14 @@ public class BluetoothUtility {
                     Bluetooth bluetooth = new Bluetooth();
                     bluetooth.setName(device.getName());
                     bluetooth.setAddress(device.getAddress());
-                    Log.d(TAG, "onReceive found " + device.getName() + "-" + device.getAddress());
+                    Log.d(TAG, "onReceive found  " + device.getName() + "-" + device.getAddress() +"---"+newBluetooths.size() +"----"+connectedBluetooths.size());
 
 //                    bluetooth.setType(device.getType()); // API 18
 //                    bluetooth.setUuid(device.getUuids()); // API 15
 //                    short rssi = intent.getExtras().getShort(BluetoothDevice.EXTRA_DEVICE);
  //                   Log.d("info",device.getName()+":"+rssi);
+
+
                     if (device.getBondState() == BluetoothDevice.BOND_BONDED)
                     {
                         for (Bluetooth bluetooth1 : connectedBluetooths)
@@ -100,7 +102,8 @@ public class BluetoothUtility {
                     {
                         Log.d(TAG, "Name : "+bluetooth1.getName() + "Address : "+bluetooth1.getAddress());
                     }
-                    Toast.makeText(context,"Total "+newBluetooths.size() +"devices . ",Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onReceive: newDev "+newBluetooths.size() + "-- Conn" + connectedBluetooths.size());
+                    Toast.makeText(context,"Total "+newBluetooths.size() +"  devices . ",Toast.LENGTH_SHORT).show();
                     break;
             }
         }
