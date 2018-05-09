@@ -174,6 +174,15 @@ public class BluetoothUtility {
         this.connectedBluetooths = connectedBluetooths;
     }
 
+
+    public List<Bluetooth> getBluetoothDevice()
+    {
+        List<Bluetooth> mDevices = new ArrayList<Bluetooth>();
+        Log.d(TAG, "getBluetoothDevice: Add new Bluetooths successful? "+mDevices.addAll(newBluetooths));
+        Log.d(TAG, "getBluetoothDevice: Add connected Device successful? " + mDevices.addAll(connectedBluetooths));
+        return mDevices;
+    }
+
     public void searchBT()
     {
         try{
