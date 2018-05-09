@@ -31,6 +31,8 @@ public class BluetoothUtility {
     private static BluetoothAdapter bluetoothAdapter;
     private final Context context;
 
+    private Handler mhandler;
+
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,6 +71,7 @@ public class BluetoothUtility {
 
                         }
                         connectedBluetooths.add(bluetooth);
+                        noticeDeviceChange();
                     }
                     else
                     {
@@ -82,6 +85,8 @@ public class BluetoothUtility {
 
                         }
                         newBluetooths.add(bluetooth);
+                        noticeDeviceChange();
+
                         Log.d(TAG, "onReceive: Add - size "+newBluetooths.size());
                     }
 
@@ -111,18 +116,24 @@ public class BluetoothUtility {
 
     private List<Bluetooth> newBluetooths;
     private List<Bluetooth> connectedBluetooths;
+    private List<Bluetooth> deviceCollections;
 
-    public BluetoothUtility(Context context) {
+    public BluetoothUtility(Context context,Handler handler) {
         super();
         this.context = context;
+        this.mhandler = handler;
         initialization();
     }
 
     private void initialization()
     {
-        Log.d(TAG, "initialing");
+//        Log.d(TAG, "initialing");
         connectedBluetooths = new ArrayList<Bluetooth>();
         newBluetooths = new ArrayList<Bluetooth>();
+        deviceCollections = new ArrayList<Bluetooth>();
+
+//        mhandler = new Handler();
+
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null)
         {
@@ -177,10 +188,11 @@ public class BluetoothUtility {
 
     public List<Bluetooth> getBluetoothDevice()
     {
-        List<Bluetooth> mDevices = new ArrayList<Bluetooth>();
-        Log.d(TAG, "getBluetoothDevice: Add new Bluetooths successful? "+mDevices.addAll(newBluetooths));
-        Log.d(TAG, "getBluetoothDevice: Add connected Device successful? " + mDevices.addAll(connectedBluetooths));
-        return mDevices;
+        deviceCollections.clear();
+        Log.d(TAG, "getBluetoothDevice: ");
+        Log.d(TAG, "getBluetoothDevice: Add new Bluetooths successful? "+deviceCollections.addAll(newBluetooths));
+        Log.d(TAG, "getBluetoothDevice: Add connected Device successful? " + deviceCollections.addAll(connectedBluetooths));
+        return deviceCollections;
     }
 
     public void searchBT()
@@ -206,5 +218,12 @@ public class BluetoothUtility {
             Toast.makeText(context,"Search fail...",Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void noticeDeviceChange()
+    {
+        int DEVICE_CHANGE = 1;
+        mhandler.sendEmptyMessage(DEVICE_CHANGE);
+        getBluetoothDevice();
     }
 }

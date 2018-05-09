@@ -35,11 +35,24 @@ public class MainActivity extends Activity {
 
     private TextView tv_timeDisplay;
     private ImageView iv_emoji;
-    private Handler mHandler;
     private ListView lv_menu;
     private BluetoothUtility btUtility;
     private DrawerLayout dl_content;
     private BluetoothListAdapter bluetoothListAdapter;
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1)
+            {
+                bluetoothListAdapter.notifyDataSetChanged();
+                Log.d(TAG, "Attention pleas! Device set had changed!");
+            }
+        }
+    };
+    private List<Bluetooth> list;
+    private List<Bluetooth> popupWindowsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +75,16 @@ public class MainActivity extends Activity {
     private void initialization()
     {
 
+
         dl_content = findViewById(R.id.dl_main);
         tv_timeDisplay = findViewById(R.id.tv_time);
         iv_emoji = findViewById(R.id.iv_emoji);
         initialMenu();
-        btUtility = new BluetoothUtility(this);
+        btUtility = new BluetoothUtility(this,mHandler);
+        popupWindowsList = btUtility.getBluetoothDevice();
+        bluetoothListAdapter = new BluetoothListAdapter(getApplicationContext(),popupWindowsList);
+
+
 //        mHandler = new Handler()
 //        {
 //            @Override
@@ -147,9 +165,7 @@ public class MainActivity extends Activity {
         Button bt_search = contentView.findViewById(R.id.bt_search);
 
 
-        List<Bluetooth> list = btUtility.getNewBluetooths();
-        Log.d(TAG, "BTPopWindows: BTD"+list.size());
-        bluetoothListAdapter = new BluetoothListAdapter(getApplicationContext(),list);
+        Log.d(TAG, "BTPopWindows: BTD"+popupWindowsList.size());
         lv_BT.setAdapter(bluetoothListAdapter);
         lv_BT.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
