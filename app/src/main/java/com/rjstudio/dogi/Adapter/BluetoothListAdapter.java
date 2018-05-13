@@ -55,12 +55,12 @@ public class BluetoothListAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item,null);
         TextView tv = view.findViewById(R.id.it_tv);
-        tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: "+list.get(position).getName()+"list size"+list.size());
-            }
-        });
+//        tv.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d(TAG, "onClick: "+list.get(position).getName()+"list size"+list.size());
+//            }
+//        });
         tv.setText(list.get(position).getName());
         return view;
     }

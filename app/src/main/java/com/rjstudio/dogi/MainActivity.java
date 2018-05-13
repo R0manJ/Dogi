@@ -1,6 +1,7 @@
 package com.rjstudio.dogi;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.rjstudio.dogi.Adapter.BluetoothListAdapter;
 import com.rjstudio.dogi.Utilities.BluetoothUtility;
 import com.rjstudio.dogi.Bean.Bluetooth;
+import com.rjstudio.dogi.Utilities.BluetoothUtilityTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,10 +51,25 @@ public class MainActivity extends Activity {
                 bluetoothListAdapter.notifyDataSetChanged();
                 Log.d(TAG, "Attention pleas! Device set had changed!");
             }
+
+            switch (msg.what)
+            {
+                case 1:
+                    break;
+                case 2:
+                    Log.d(TAG, "BT handle is "+msg.obj);
+                    tv_timeDisplay.setText(msg.obj.toString());
+                    break;
+                case 99:
+                    Log.d(TAG, "handleMessage: BT socket is connected.");
+                    break;
+
+            }
         }
     };
     private List<Bluetooth> list;
     private List<Bluetooth> popupWindowsList;
+    private ListView lv_bt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,16 +178,23 @@ public class MainActivity extends Activity {
     private void BTPopWindows()
     {
         View contentView = LayoutInflater.from(MainActivity.this).inflate(R.layout.popwindows,null,false);
-        ListView lv_BT = contentView.findViewById(R.id.lv_bt);
+        lv_bt = contentView.findViewById(R.id.lv_bt);
         Button bt_search = contentView.findViewById(R.id.bt_search);
 
 
         Log.d(TAG, "BTPopWindows: BTD"+popupWindowsList.size());
-        lv_BT.setAdapter(bluetoothListAdapter);
-        lv_BT.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lv_bt.setAdapter(bluetoothListAdapter);
+        lv_bt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+//                Log.d(TAG, "onItemClick: "+bluetoothListAdapter.getItem(position));
+                Bluetooth device = (Bluetooth) bluetoothListAdapter.getItem(position);
+                //Toast.makeText(getApplication(),device.getName() + "---" +device.getAddress(),Toast.LENGTH_SHORT).show();
+                BluetoothUtilityTest bluetoothUtilityTest = new BluetoothUtilityTest(mHandler,device.getAddress());
+                bluetoothUtilityTest.start();
+                bluetoothUtilityTest.sendMessageTest("测试完毕");
+//                Toast.makeText(getApplicationContext(),device.getName() + "---" +device.getAddress(),Toast.LENGTH_SHORT).show();
+//                Log.d("BT Click", "onItemClick: "+device.getName() + "---" +device.getAddress());
             }
         });
 
@@ -184,7 +208,14 @@ public class MainActivity extends Activity {
 
 
 
-        popupWindow.showAtLocation(contentView,Gravity.LEFT,0,1);
+        try {
+            popupWindow.showAtLocation(contentView,Gravity.LEFT,0,1);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
         bt_search.setOnClickListener(new View.OnClickListener() {
             @Override
