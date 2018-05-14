@@ -58,6 +58,7 @@ public class BluetoothUtilityTest extends Thread {
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         try {
             connet();
+            startService();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,19 +98,22 @@ public class BluetoothUtilityTest extends Thread {
     public void run() {
         super.run();
 
-        try{
-            serviceSocket.accept();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
+//        try{
+//            serviceSocket.accept();
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//
 
         try {
             clientSocket.connect();
+
+
             outputStream = clientSocket.getOutputStream();
             inputStream = clientSocket.getInputStream();
+            msg = new Message();
             msg.what = 99;
             mHandler.sendMessage(msg);
 
@@ -156,6 +160,8 @@ public class BluetoothUtilityTest extends Thread {
 
     public void sendMessageTest(String content)
     {
+
+        Log.d(TAG, "sendMessageTest: 开始测试");
         if (clientSocket == null || outputStream == null)
         {
             Log.d(TAG, "ClientSocket or outputStream is null.");
@@ -163,6 +169,7 @@ public class BluetoothUtilityTest extends Thread {
         }
         for (int i = 0 ; i < 10 ; i++)
         {
+            Log.d(TAG, "sendMessageTest: 测试 "+ i);
             byte[] a = (i+"").getBytes();
             try {
                 outputStream.write(a);
@@ -174,10 +181,12 @@ public class BluetoothUtilityTest extends Thread {
 
         byte[] contents = content.getBytes();
         try {
+            Log.d(TAG, "sendMessageTest: "+content);
             outputStream.write(contents);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "sendMessageTest:" + contents);
     }
 
     public void startService()

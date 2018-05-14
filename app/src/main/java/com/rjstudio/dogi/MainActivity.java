@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rjstudio.dogi.Adapter.BluetoothListAdapter;
+import com.rjstudio.dogi.Utilities.BluetoothServerTest;
 import com.rjstudio.dogi.Utilities.BluetoothUtility;
 import com.rjstudio.dogi.Bean.Bluetooth;
 import com.rjstudio.dogi.Utilities.BluetoothUtilityTest;
@@ -60,8 +61,13 @@ public class MainActivity extends Activity {
                     Log.d(TAG, "BT handle is "+msg.obj);
                     tv_timeDisplay.setText(msg.obj.toString());
                     break;
+                case 98:
+                    tv_timeDisplay.setText(msg.obj.toString());
+                    break;
                 case 99:
                     Log.d(TAG, "handleMessage: BT socket is connected.");
+                    bluetoothUtilityTest.sendMessageTest("Test complete!");
+
                     break;
 
             }
@@ -70,6 +76,7 @@ public class MainActivity extends Activity {
     private List<Bluetooth> list;
     private List<Bluetooth> popupWindowsList;
     private ListView lv_bt;
+    private BluetoothUtilityTest bluetoothUtilityTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +98,9 @@ public class MainActivity extends Activity {
 
     private void initialization()
     {
-
+//
+        BluetoothServerTest blue = new BluetoothServerTest(mHandler);
+        blue.start();
 
         dl_content = findViewById(R.id.dl_main);
         tv_timeDisplay = findViewById(R.id.tv_time);
@@ -190,9 +199,8 @@ public class MainActivity extends Activity {
 //                Log.d(TAG, "onItemClick: "+bluetoothListAdapter.getItem(position));
                 Bluetooth device = (Bluetooth) bluetoothListAdapter.getItem(position);
                 //Toast.makeText(getApplication(),device.getName() + "---" +device.getAddress(),Toast.LENGTH_SHORT).show();
-                BluetoothUtilityTest bluetoothUtilityTest = new BluetoothUtilityTest(mHandler,device.getAddress());
+                bluetoothUtilityTest = new BluetoothUtilityTest(mHandler,device.getAddress());
                 bluetoothUtilityTest.start();
-                bluetoothUtilityTest.sendMessageTest("测试完毕");
 //                Toast.makeText(getApplicationContext(),device.getName() + "---" +device.getAddress(),Toast.LENGTH_SHORT).show();
 //                Log.d("BT Click", "onItemClick: "+device.getName() + "---" +device.getAddress());
             }
