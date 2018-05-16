@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -116,6 +117,10 @@ public class MainActivity extends Activity {
         popupWindowsList = btUtility.getBluetoothDevice();
         bluetoothListAdapter = new BluetoothListAdapter(getApplicationContext(),popupWindowsList);
 
+
+        AnimationDrawable frameAnim = (AnimationDrawable) getResources().getDrawable(R.drawable.eyeing);
+//        iv_emoji.setBackgroundDrawable(frameAnim);
+//        frameAnim.start();
 
 //        mHandler = new Handler()
 //        {
