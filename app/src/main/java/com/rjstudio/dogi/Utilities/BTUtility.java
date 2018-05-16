@@ -89,7 +89,17 @@ public class BTUtility {
         }
     }
 
-    public void writeToClient
+    public void writeToClientOutput(String content)
+    {
+        if (! isClientOutputStreamIsNull){
+            byte[] contents = content.getBytes();
+            try {
+                clientOutputStream.write(contents);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     private class ServerSocket extends Thread{
 
         public ServerSocket() {
