@@ -2,6 +2,8 @@ package com.rjstudio.dogi;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -99,6 +101,10 @@ public class MainActivity extends Activity {
     private void initialization()
     {
 //
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
         BluetoothServerTest blue = new BluetoothServerTest(mHandler);
         blue.start();
 
