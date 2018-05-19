@@ -20,7 +20,7 @@ import static android.content.ContentValues.TAG;
  * version: 2.0
  */
 
-public class BTUtility {
+public class BTUtility extends Thread{
 
     private Handler handler;
     private BluetoothAdapter bluetoothAdapter;
@@ -78,12 +78,12 @@ public class BTUtility {
         handler.sendMessage(msg);
     }
 
-    private void clientConnect(String bluetoothDeviceAddress)
+    public void clientConnect(String bluetoothDeviceAddress)
     {
         this.bluetoothDevice = bluetoothAdapter.getRemoteDevice(bluetoothDeviceAddress);
         try {
+            Log.d(TAG, "clientConnect: starting...");
             bluetoothSocketOfClient = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(serial_UUID);
-            new ClientSocket().start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -140,11 +140,14 @@ public class BTUtility {
     private class ClientSocket extends Thread{
         @Override
         public void run() {
-            super.run();
+            //super.run();
             try {
+                Log.d(TAG, "run: connecting...");
                 bluetoothSocketOfClient.connect();
                 sendMessageToHandler(50 ,"Device has connected!", handler);
+                Log.d(TAG, "run: has connected!");
                 clientInputStream = bluetoothSocketOfClient.getInputStream();
+                Log.d(TAG, "run:  has got inputStream is "+(clientInputStream==null)+"");
                 sendMessageToHandler(51,"Device inputStream has got!",handler);
 
                 if ( (clientOutputStream = bluetoothSocketOfClient.getOutputStream()) != null)
@@ -153,21 +156,32 @@ public class BTUtility {
                     sendMessageToHandler(52,"Device outputStream has got!",handler);
 
                 }
+                
                 while (true)
                 {
                     sendMessageToHandler(53,"Client InputStream is listening!",handler);
-                    int a = 0;
-                    while( (a = clientInputStream.read()) !=-1)
+                    int content = 0;
+                    Log.d(TAG, "run: listening...");
+                    while( (content = clientInputStream.read()) != -1)
                     {
-                        Log.d(TAG, "Recvier is"+(char)a);
-                        sendMessageToHandler(54,a+"",handler);
+                        Log.d(TAG, "Receiver is"+(char)content);
+                        sendMessageToHandler(54,content+"",handler);
                     }
+                    Log.d(TAG, "Receiver is"+(char)content);
+
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
 
 
         }
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        new ClientSocket().start();
     }
 }

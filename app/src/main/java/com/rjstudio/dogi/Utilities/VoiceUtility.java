@@ -120,8 +120,8 @@ public class VoiceUtility {
 
     public void getCurrentTime(int HOUR,int MINUTER,int SECONDE,int DAY) throws InterruptedException {
         // xian zai shi
-        soundPool.play(soundID.get(200),1,1,0,0,1);
-        Thread.sleep(1800);
+        soundPool.play(soundID.get(200),1,1,0,0,1.2f);
+        Thread.sleep(1600);
 
         getNumber(HOUR);
 

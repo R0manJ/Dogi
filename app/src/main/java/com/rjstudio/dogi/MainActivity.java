@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,10 +28,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rjstudio.dogi.Adapter.BluetoothListAdapter;
+import com.rjstudio.dogi.Utilities.BTUtility;
 import com.rjstudio.dogi.Utilities.BluetoothServerTest;
 import com.rjstudio.dogi.Utilities.BluetoothUtility;
 import com.rjstudio.dogi.Bean.Bluetooth;
 import com.rjstudio.dogi.Utilities.BluetoothUtilityTest;
+import com.rjstudio.dogi.Utilities.TimeUtilty;
+import com.rjstudio.dogi.Utilities.VoiceUtility;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,17 +57,88 @@ public class MainActivity extends Activity {
             if (msg.what == 1)
             {
                 bluetoothListAdapter.notifyDataSetChanged();
-                Log.d(TAG, "Attention pleas! Device set had changed!");
+//                Log.d(TAG, "Attention pleas! Device set had changed!");
             }
 
             switch (msg.what)
             {
                 case 1:
+                    // Time display...
+                    tv_timeDisplay.setText(TimeUtilty.getInstance().getCurrentTime());
                     break;
                 case 2:
                     Log.d(TAG, "BT handle is "+msg.obj);
                     tv_timeDisplay.setText(msg.obj.toString());
                     break;
+                //接收到语音的指令处理
+                case 54:
+                    switch (Integer.decode(msg.obj+"")){
+                        case 1:
+                            Toast.makeText(getApplicationContext(),"Turn on light",Toast.LENGTH_SHORT).show();
+                            break;
+                        case 2:
+                            Toast.makeText(getApplicationContext(),"Turn off light",Toast.LENGTH_SHORT).show();
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            break;
+                        case 5:
+                            break;
+                        case 6:
+                            break;
+                        case 7:
+                            //温湿度：
+                            String value;
+                            String number = "";
+                            String number2;
+                            Log.d(TAG, "摄氏度 ， 湿度 : "+msg.obj);
+                            switch ((int)msg.obj)
+                            {
+                                case 238:
+                                    receiveTime ++;
+                                    break;
+
+                                default:
+                                    if (receiveTime == 1)
+                                    {
+                                        number = msg.obj+"";
+                                        receiveTime ++;
+                                    }
+                                    else if (receiveTime == 2)
+                                    {
+                                        tv_temperature.setText(number + "." + msg.obj + "摄氏度");
+                                    }
+                                    else if (receiveTime == 3)
+                                    {
+                                        number = msg.obj+"";
+                                        receiveTime ++;
+                                    }
+                                    else if (receiveTime == 4)
+                                    {
+                                        tv_humidity.setText(number + "."+msg.obj + "% RH ");
+                                    }
+
+                                    break;
+                                case 255:
+                                    receiveTime = 0;
+                                    break;
+
+                            }
+                            break;
+                        case 8:
+                            try {
+                                VoiceUtility.getInstance(getApplicationContext()).getCurrentTime(
+                                        TimeUtilty.getInstance().getCurrentHour(),
+                                        TimeUtilty.getInstance().getCurrentMinuter(),
+                                        TimeUtilty.getInstance().getCurrentSecond(),
+                                        0
+                                );
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
                 case 98:
                     tv_timeDisplay.setText(msg.obj.toString());
                     break;
@@ -80,6 +155,11 @@ public class MainActivity extends Activity {
     private List<Bluetooth> popupWindowsList;
     private ListView lv_bt;
     private BluetoothUtilityTest bluetoothUtilityTest;
+    private PowerManager powerManager;
+    private PowerManager.WakeLock wakeLock;
+    private int receiveTime;
+    private TextView tv_humidity;
+    private TextView tv_temperature;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,8 +199,12 @@ public class MainActivity extends Activity {
 
 
         AnimationDrawable frameAnim = (AnimationDrawable) getResources().getDrawable(R.drawable.eyeing);
-//        iv_emoji.setBackgroundDrawable(frameAnim);
-//        frameAnim.start();
+        iv_emoji.setBackgroundDrawable(frameAnim);
+        frameAnim.start();
+
+        powerManager = (PowerManager) this.getSystemService(this.POWER_SERVICE);
+        wakeLock = this.powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "TEST");
+        wakeLock.acquire();
 
 //        mHandler = new Handler()
 //        {
@@ -139,7 +223,8 @@ public class MainActivity extends Activity {
     private void initialMenu()
     {
         lv_menu = findViewById(R.id.lv_menu);
-
+        tv_temperature = findViewById(R.id.tv_temperature);
+        tv_humidity = findViewById(R.id.tv_humidity);
         List<String> menu = Arrays.asList(new String[]{"Bluetooth","About"});
         ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,menu);
 
@@ -163,9 +248,11 @@ public class MainActivity extends Activity {
             }
         });
 
+        new TimeThread().start();
 
 
     }
+
     class TimeThread extends Thread{
 
         private Message message;
@@ -210,10 +297,17 @@ public class MainActivity extends Activity {
 //                Log.d(TAG, "onItemClick: "+bluetoothListAdapter.getItem(position));
                 Bluetooth device = (Bluetooth) bluetoothListAdapter.getItem(position);
                 //Toast.makeText(getApplication(),device.getName() + "---" +device.getAddress(),Toast.LENGTH_SHORT).show();
-                bluetoothUtilityTest = new BluetoothUtilityTest(mHandler,device.getAddress());
-                bluetoothUtilityTest.start();
+//                bluetoothUtilityTest = new BluetoothUtilityTest(mHandler,device.getAddress());
+//                bluetoothUtilityTest.start();
+
 //                Toast.makeText(getApplicationContext(),device.getName() + "---" +device.getAddress(),Toast.LENGTH_SHORT).show();
 //                Log.d("BT Click", "onItemClick: "+device.getName() + "---" +device.getAddress());
+
+                BTUtility btUtility = new BTUtility(mHandler);
+                btUtility.clientConnect(device.getAddress());
+                btUtility.start();
+                btUtility.writeToClientOutput(7+"");
+
             }
         });
 
