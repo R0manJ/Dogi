@@ -1,6 +1,7 @@
 package com.rjstudio.dogi;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -47,7 +49,10 @@ public class MainActivity extends Activity {
     private DrawerLayout dl_content;
     private BluetoothListAdapter bluetoothListAdapter;
 
+    //用于保存用户数据
     String number = "";
+    String Temperature = "";
+    String Humidity = "";
 
     //用于刷新温湿度 ， 定义 10 秒 请求一次。
     private int flushTH = 0 ;
@@ -97,7 +102,8 @@ public class MainActivity extends Activity {
                         }
                         else if (receiveTime == 2)
                         {
-                            tv_temperature.setText(number + "." + msg.obj + "℃");
+                            Temperature = number + "."+msg.obj;
+                            tv_temperature.setText(Temperature+ "℃");
                             number = "";
                             receiveTime ++;
                         }
@@ -108,9 +114,11 @@ public class MainActivity extends Activity {
                         }
                         else if (receiveTime == 4)
                         {
-                            tv_humidity.setText(number + "."+msg.obj + "% RH ");
+                            Humidity = number + "." +msg.obj;
+                            tv_humidity.setText(Humidity + "% RH ");
                             isTH = false;
                             receiveTime = 0;
+                            VoiceUtility.getInstance(getApplicationContext()).playTempertaureAndHumidity(Temperature,Humidity);
                         }
 
                     }
@@ -121,9 +129,11 @@ public class MainActivity extends Activity {
                         {
                             case 1:
                                 Toast.makeText(getApplicationContext(),"Turn on light",Toast.LENGTH_SHORT).show();
+                                VoiceUtility.getInstance(getApplicationContext()).getTurnOnLight();
                                 break;
                             case 2:
                                 Toast.makeText(getApplicationContext(),"Turn off light",Toast.LENGTH_SHORT).show();
+                                VoiceUtility.getInstance(getApplicationContext()).getTurnOffLight();
                                 break;
                             case 3:
                                 break;
@@ -133,22 +143,16 @@ public class MainActivity extends Activity {
                                 break;
                             case 6:
                                 break;
+                            case 7:
+                                isTH = true;
+                                break;
                             case 238:
                                 //返回 238 ， 7 温湿度：
                                 isTH = true;
                                 receiveTime ++;
                                 break;
                             case 8:
-                                try {
-                                    VoiceUtility.getInstance(getApplicationContext()).getCurrentTime(
-                                            TimeUtilty.getInstance().getCurrentHour(),
-                                            TimeUtilty.getInstance().getCurrentMinuter(),
-                                            TimeUtilty.getInstance().getCurrentSecond(),
-                                            0
-                                    );
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                                startActivity(new Intent(getApplicationContext(),Main2Activity.class));
                                 break;
                             case 98:
                                 tv_timeDisplay.setText(msg.obj.toString());
@@ -181,6 +185,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         initialization();
 
@@ -225,6 +230,9 @@ public class MainActivity extends Activity {
 //            }
 //        };
 //        new TimeThread().start();
+
+        Intent intent = new Intent(this,Main2Activity.class);
+        startActivity(intent);
     }
 
     private void initialMenu()
@@ -318,7 +326,7 @@ public class MainActivity extends Activity {
 
 
         try {
-            popupWindow.showAtLocation(contentView,Gravity.LEFT,0,1);
+            popupWindow.showAtLocation(contentView,Gravity.CENTER,0,1);
 
         }
         catch (Exception e)

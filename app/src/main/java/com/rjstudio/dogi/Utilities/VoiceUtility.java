@@ -24,7 +24,7 @@ public class VoiceUtility {
 
     private  VoiceUtility(Context context) throws InterruptedException {
 
-        soundPool = new SoundPool(19, AudioManager.STREAM_SYSTEM,3);
+        soundPool = new SoundPool(26, AudioManager.STREAM_SYSTEM,3);
         //HashMap
 
         // Number
@@ -54,6 +54,16 @@ public class VoiceUtility {
         soundID.put(200,soundPool.load(context,R.raw.nowis,1));
         soundID.put(201,soundPool.load(context,R.raw.drop,1));
         soundID.put(202,soundPool.load(context,R.raw.fen,1));
+
+        //温度和湿度
+        soundID.put(210 ,soundPool.load(context,R.raw.temperature ,1));
+        soundID.put(211 , soundPool.load(context,R.raw.du ,1 ));
+        soundID.put(212 , soundPool.load(context,R.raw.humidity,1));
+        soundID.put(213 , soundPool.load(context,R.raw.baifenzhi ,1));
+
+        //开灯关灯
+        soundID.put(220 , soundPool.load(context,R.raw.kaideng,1));
+        soundID.put(221 , soundPool.load(context,R.raw.guandeng,1));
 
         Thread.sleep(3000);
 
@@ -119,6 +129,7 @@ public class VoiceUtility {
     }
 
     public void getCurrentTime(int HOUR,int MINUTER,int SECONDE,int DAY) throws InterruptedException {
+        Log.d(TAG, "getCurrentTime: .....");
         // xian zai shi
         soundPool.play(soundID.get(200),1,1,0,0,1.2f);
         Thread.sleep(1600);
@@ -235,4 +246,73 @@ public class VoiceUtility {
     }
 
 
+    public void getDecimal(String content)
+    {
+        String [] numbers = content.split(".");
+
+        try {
+            getNumber(Integer.valueOf(numbers[0]));
+            // dian
+            soundPool.play(soundID.get(201),1,1,0,0,1);
+            Thread.sleep(800);
+            getNumber(Integer.valueOf(numbers[1]));
+
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getTemperature(String content)
+    {
+        try {
+            soundPool.play(soundID.get(210),1,1,0,0,1.2f);
+            Thread.sleep(2000);
+            getDecimal(content);
+            soundPool.play(soundID.get(211),1,1,0,0,1.2f);
+            Thread.sleep(700);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void getHuidity(String content)
+    {
+
+        try {
+            soundPool.play(soundID.get(212),1,1,0,0,1.2f);
+            Thread.sleep(1500);
+            soundPool.play(soundID.get(213),1,1,0,0,1.2f);
+            Thread.sleep(900);
+            getDecimal(content);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void playTempertaureAndHumidity(String temperature , String humidity)
+    {
+        getTemperature(temperature);
+        getHuidity(humidity);
+    }
+
+    public void getTurnOnLight() {
+        soundPool.play(soundID.get(220),1,1,0,0,1.2f);
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getTurnOffLight()  {
+        soundPool.play(soundID.get(221),1,1,0,0,1.2f);
+        try {
+            Thread.sleep(800);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
