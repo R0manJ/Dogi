@@ -248,14 +248,24 @@ public class VoiceUtility {
 
     public void getDecimal(String content)
     {
-        String [] numbers = content.split(".");
-
+        Log.d(TAG, "getDecimal: " + content);
+        //注意点 需要转义字符。
+        String [] numbers = content.split("\\.");
+        Log.d(TAG, "getDecimal: numbers size is "+numbers.length);
         try {
             getNumber(Integer.valueOf(numbers[0]));
-            // dian
-            soundPool.play(soundID.get(201),1,1,0,0,1);
-            Thread.sleep(800);
-            getNumber(Integer.valueOf(numbers[1]));
+
+            if (Integer.valueOf(numbers[1]) == 0)
+            {
+                return;
+            }
+            else
+            {
+                // dian
+                soundPool.play(soundID.get(201),1,1,0,0,1);
+                Thread.sleep(500);
+                getNumber(Integer.valueOf(numbers[1]));
+            }
 
 
         } catch (InterruptedException e) {
@@ -267,7 +277,7 @@ public class VoiceUtility {
     {
         try {
             soundPool.play(soundID.get(210),1,1,0,0,1.2f);
-            Thread.sleep(2000);
+            Thread.sleep(2200);
             getDecimal(content);
             soundPool.play(soundID.get(211),1,1,0,0,1.2f);
             Thread.sleep(700);
@@ -277,14 +287,14 @@ public class VoiceUtility {
 
     }
 
-    public void getHuidity(String content)
+    public void getHumidity(String content)
     {
 
         try {
             soundPool.play(soundID.get(212),1,1,0,0,1.2f);
-            Thread.sleep(1500);
+            Thread.sleep(2200);
             soundPool.play(soundID.get(213),1,1,0,0,1.2f);
-            Thread.sleep(900);
+            Thread.sleep(1300);
             getDecimal(content);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -292,10 +302,15 @@ public class VoiceUtility {
     }
 
 
-    public void playTempertaureAndHumidity(String temperature , String humidity)
+    public void playTemperatureAndHumidity(String temperature , String humidity)
     {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         getTemperature(temperature);
-        getHuidity(humidity);
+        getHumidity(humidity);
     }
 
     public void getTurnOnLight() {

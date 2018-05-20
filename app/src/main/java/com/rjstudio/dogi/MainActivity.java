@@ -118,13 +118,15 @@ public class MainActivity extends Activity {
                             tv_humidity.setText(Humidity + "% RH ");
                             isTH = false;
                             receiveTime = 0;
-                            VoiceUtility.getInstance(getApplicationContext()).playTempertaureAndHumidity(Temperature,Humidity);
+                            Log.d(TAG, "handleMessage: TH = "+Temperature + "---" + Humidity);
+                            VoiceUtility.getInstance(getApplicationContext()).playTemperatureAndHumidity(Temperature,Humidity);
                         }
 
                     }
                     else
                     {
 
+                        Log.d(TAG, "handleMessage: item "+msg.obj);
                         switch (Integer.decode(msg.obj+""))
                         {
                             case 1:
@@ -144,7 +146,8 @@ public class MainActivity extends Activity {
                             case 6:
                                 break;
                             case 7:
-                                isTH = true;
+                                Log.d(TAG, "handleMessage: TH reading...");
+//                                isTH = true;
                                 break;
                             case 238:
                                 //返回 238 ， 7 温湿度：
@@ -230,6 +233,11 @@ public class MainActivity extends Activity {
 //            }
 //        };
 //        new TimeThread().start();
+
+
+        //连接蓝牙设备
+        btUtility = new BTUtility(mHandler);
+        btUtility.clientConnect("00:0C:BF:06:12:47");
 
         Intent intent = new Intent(this,Main2Activity.class);
         startActivity(intent);

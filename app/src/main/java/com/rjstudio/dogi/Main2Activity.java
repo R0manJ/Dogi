@@ -49,7 +49,7 @@ public class Main2Activity extends Activity {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if (keepTime == 20)
+                if (keepTime == 15)
                 {
                     keepTime = 0;
                     finish();
