@@ -40,6 +40,7 @@ public class BTUtility extends Thread{
 
     private Message msg;
     private BluetoothSocket bluetoothSocketOfClient;
+    private boolean isTH;
 
     public BTUtility(Handler handler) {
             this.handler = handler;
@@ -84,6 +85,21 @@ public class BTUtility extends Thread{
         try {
             Log.d(TAG, "clientConnect: starting...");
             bluetoothSocketOfClient = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(serial_UUID);
+            new ClientSocket().start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getTH()
+    {
+        if (isClientOutputStreamIsNull)
+        {
+            return;
+        }
+        byte b[]={7};
+        try {
+            clientOutputStream.write(b);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,6 +107,7 @@ public class BTUtility extends Thread{
 
     public void writeToClientOutput(String content)
     {
+
         if (! isClientOutputStreamIsNull){
             byte[] contents = content.getBytes();
             try {
@@ -142,12 +159,14 @@ public class BTUtility extends Thread{
         public void run() {
             //super.run();
             try {
-                Log.d(TAG, "run: connecting...");
+//                Log.d(TAG, "run: connecting...");
                 bluetoothSocketOfClient.connect();
                 sendMessageToHandler(50 ,"Device has connected!", handler);
-                Log.d(TAG, "run: has connected!");
+//                Log.d(TAG, "run: has connected!");
                 clientInputStream = bluetoothSocketOfClient.getInputStream();
-                Log.d(TAG, "run:  has got inputStream is "+(clientInputStream==null)+"");
+                clientOutputStream = bluetoothSocketOfClient.getOutputStream();
+                getTH();
+//                Log.d(TAG, "run:  has got inputStream is "+(clientInputStream==null)+"");
                 sendMessageToHandler(51,"Device inputStream has got!",handler);
 
                 if ( (clientOutputStream = bluetoothSocketOfClient.getOutputStream()) != null)
@@ -161,13 +180,12 @@ public class BTUtility extends Thread{
                 {
                     sendMessageToHandler(53,"Client InputStream is listening!",handler);
                     int content = 0;
-                    Log.d(TAG, "run: listening...");
                     while( (content = clientInputStream.read()) != -1)
                     {
-                        Log.d(TAG, "Receiver is"+(char)content);
                         sendMessageToHandler(54,content+"",handler);
+
+
                     }
-                    Log.d(TAG, "Receiver is"+(char)content);
 
                 }
             }
@@ -179,9 +197,5 @@ public class BTUtility extends Thread{
         }
     }
 
-    @Override
-    public void run() {
-        super.run();
-        new ClientSocket().start();
-    }
+
 }
