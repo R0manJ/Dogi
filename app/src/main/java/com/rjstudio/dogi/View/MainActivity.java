@@ -1,4 +1,4 @@
-package com.rjstudio.dogi;
+package com.rjstudio.dogi.View;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,8 +16,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
+
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rjstudio.dogi.Adapter.BluetoothListAdapter;
+import com.rjstudio.dogi.R;
 import com.rjstudio.dogi.Utilities.BTUtility;
 import com.rjstudio.dogi.Utilities.BluetoothServerTest;
 import com.rjstudio.dogi.Utilities.BluetoothUtility;
@@ -130,10 +130,16 @@ public class MainActivity extends Activity {
                         switch (Integer.decode(msg.obj+""))
                         {
                             case 1:
+                                iv_emoji.setBackgroundDrawable(frameAnim_on);
+                                frameAnim_normal.stop();
+                                frameAnim_on.start();
                                 Toast.makeText(getApplicationContext(),"Turn on light",Toast.LENGTH_SHORT).show();
                                 VoiceUtility.getInstance(getApplicationContext()).getTurnOnLight();
                                 break;
                             case 2:
+                                iv_emoji.setBackgroundDrawable(frameAnim_normal);
+                                frameAnim_on.stop();
+                                frameAnim_normal.start();
                                 Toast.makeText(getApplicationContext(),"Turn off light",Toast.LENGTH_SHORT).show();
                                 VoiceUtility.getInstance(getApplicationContext()).getTurnOffLight();
                                 break;
@@ -183,6 +189,8 @@ public class MainActivity extends Activity {
     private boolean isTH;
     private BTUtility btUtility;
     private PopupWindow popupWindow;
+    private AnimationDrawable frameAnim_normal;
+    private AnimationDrawable frameAnim_on;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +205,7 @@ public class MainActivity extends Activity {
     private void initialization()
     {
 //
+
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
         {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -212,11 +221,12 @@ public class MainActivity extends Activity {
         popupWindowsList = bluetoothUtility.getBluetoothDevice();
         bluetoothListAdapter = new BluetoothListAdapter(getApplicationContext(),popupWindowsList);
 
-
-        AnimationDrawable frameAnim = (AnimationDrawable) getResources().getDrawable(R.drawable.eyeing);
-        iv_emoji.setBackgroundDrawable(frameAnim);
-        frameAnim.start();
-
+        frameAnim_on = (AnimationDrawable) getResources().getDrawable(R.drawable.turnonlight);
+        frameAnim_normal = (AnimationDrawable) getResources().getDrawable(R.drawable.eyeing);
+        iv_emoji.setBackgroundDrawable(frameAnim_normal);
+//        iv_emoji.setBackgroundDrawable(frameAnim_on);
+        frameAnim_normal.start();
+//        frameAnim_on.start();
         powerManager = (PowerManager) this.getSystemService(this.POWER_SERVICE);
         wakeLock = this.powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "TEST");
         wakeLock.acquire();

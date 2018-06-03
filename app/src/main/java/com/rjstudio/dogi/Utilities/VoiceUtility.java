@@ -24,10 +24,11 @@ public class VoiceUtility {
 
     private  VoiceUtility(Context context) throws InterruptedException {
 
+        // 创建soundPool对象，里面加载26个音效，并且定义为系统音效，优先级别为3级。
         soundPool = new SoundPool(26, AudioManager.STREAM_SYSTEM,3);
         //HashMap
 
-        // Number
+        // 加载声音文件到Soundpool中 -- 数字部分
         soundID.put(1,soundPool.load(context,R.raw.i1,1));
         soundID.put(2,soundPool.load(context,R.raw.i2,1));
         soundID.put(3,soundPool.load(context,R.raw.i3,1));
@@ -39,29 +40,29 @@ public class VoiceUtility {
         soundID.put(9,soundPool.load(context,R.raw.i9,1));
         soundID.put(10,soundPool.load(context,R.raw.i10,1));
 
-        // After midnight or prior to midnight
+        // 加载声音文件到Soundpool中 -- 24小时制
         soundID.put(101,soundPool.load(context,R.raw.morning,1));
         soundID.put(102,soundPool.load(context,R.raw.afternoon,1));
 
 
-        //Other
+        //加载声音文件到Soundpool中 --  Other
         soundID.put(103,soundPool.load(context,R.raw.bi,1));
         soundID.put(104,soundPool.load(context,R.raw.bibu,1));
         soundID.put(105,soundPool.load(context,R.raw.du,1));
         soundID.put(106,soundPool.load(context,R.raw.dudu,1));
 
-        //Minuter and Hour
+        //加载声音文件到Soundpool中 -- Minute and Hour
         soundID.put(200,soundPool.load(context,R.raw.nowis,1));
         soundID.put(201,soundPool.load(context,R.raw.drop,1));
         soundID.put(202,soundPool.load(context,R.raw.fen,1));
 
-        //温度和湿度
+        //加载声音文件到Soundpool中 -- 温度和湿度
         soundID.put(210 ,soundPool.load(context,R.raw.temperature ,1));
         soundID.put(211 , soundPool.load(context,R.raw.du ,1 ));
         soundID.put(212 , soundPool.load(context,R.raw.humidity,1));
         soundID.put(213 , soundPool.load(context,R.raw.baifenzhi ,1));
 
-        //开灯关灯
+        //加载声音文件到Soundpool中 -- 开灯关灯
         soundID.put(220 , soundPool.load(context,R.raw.kaideng,1));
         soundID.put(221 , soundPool.load(context,R.raw.guandeng,1));
 
@@ -69,6 +70,8 @@ public class VoiceUtility {
 
 
     }
+
+    //获取SoundPool对象。
     public static VoiceUtility getInstance(Context context)
     {
         if (voiceUtility == null)
@@ -83,6 +86,7 @@ public class VoiceUtility {
 
     }
 
+    //SoundPool测试类，当声音文件加载完毕后，则会播放提示音
     public void playTest(Context context)
     {
         if (context == null)
@@ -122,13 +126,10 @@ public class VoiceUtility {
 
             }
         });
-
-
-
-
     }
 
-    public void getCurrentTime(int HOUR,int MINUTER,int SECONDE,int DAY) throws InterruptedException {
+    //获取当前系统声音 ， 格式为 "现在是 HOUR 点 MINUTE 分 SECOND 秒。
+    public void getCurrentTime(int HOUR,int MINUTE,int SECONDE,int DAY) throws InterruptedException {
         Log.d(TAG, "getCurrentTime: .....");
         // xian zai shi
         soundPool.play(soundID.get(200),1,1,0,0,1.2f);
@@ -140,12 +141,14 @@ public class VoiceUtility {
         soundPool.play(soundID.get(201),1,1,0,0,1);
         Thread.sleep(1200);
 
-        getNumber(MINUTER);
+        getNumber(MINUTE);
 
         soundPool.play(soundID.get(202),1,1,0,0,1);
         Thread.sleep(1000);
     }
 
+
+    //传递一个数字 ， 将播报该数字。
     public void getNumber(int number) throws InterruptedException {
         //1 - 60
         int SHI = 0;
@@ -246,6 +249,7 @@ public class VoiceUtility {
     }
 
 
+    //播放带小数的数字
     public void getDecimal(String content)
     {
         Log.d(TAG, "getDecimal: " + content);
@@ -273,6 +277,7 @@ public class VoiceUtility {
         }
     }
 
+    //播放当前温度。
     public void getTemperature(String content)
     {
         try {
@@ -287,6 +292,7 @@ public class VoiceUtility {
 
     }
 
+    //播放当前湿度
     public void getHumidity(String content)
     {
 
@@ -302,6 +308,7 @@ public class VoiceUtility {
     }
 
 
+    //播放当前温湿度。
     public void playTemperatureAndHumidity(String temperature , String humidity)
     {
         try {
@@ -313,6 +320,7 @@ public class VoiceUtility {
         getHumidity(humidity);
     }
 
+    //播放开灯提示音
     public void getTurnOnLight() {
         soundPool.play(soundID.get(220),1,1,0,0,1.2f);
         try {
@@ -322,6 +330,7 @@ public class VoiceUtility {
         }
     }
 
+    //播放关灯提示音
     public void getTurnOffLight()  {
         soundPool.play(soundID.get(221),1,1,0,0,1.2f);
         try {

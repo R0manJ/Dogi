@@ -1,4 +1,4 @@
-package com.rjstudio.dogi;
+package com.rjstudio.dogi.View;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
